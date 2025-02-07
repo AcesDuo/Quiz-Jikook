@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quel type de Jikooker es-tu ?</title>
+    <style>
+        body {
+            background-image: url('https://source.unsplash.com/random/1920x1080');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #ff477e;
+            color: white;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media screen and (max-width: 768px) {
+            input, button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="registerScreen">
+        <h2>Quel type de Jikooker es-tu ?</h2>
+        <input type="text" id="pseudo" placeholder="Entrez votre pseudo" required>
+        <input type="text" id="twitter" placeholder="Entrez votre Twitter" required>
+        <button id="registerBtn">S'enregistrer</button>
+    </div>
+
+    <div class="container hidden" id="quizScreen">
+        <h2 id="questionText">Question ici</h2>
+        <div id="answersContainer"></div>
+    </div>
+
+    <div class="container hidden" id="resultScreen">
+        <h2>Résultat :</h2>
+        <p id="resultText"></p>
+        <img id="resultImage" src="" alt="Résultat">
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgJZEJrzfjR-VkRVW5VhpLJbZHKdcI-F8",
+            authDomain: "quizjikook.firebaseapp.com",
+            projectId: "quizjikook",
+            storageBucket: "quizjikook.firebasestorage.app",
+            messagingSenderId: "432884064534",
+            appId: "1:432884064534:web:588c14aa25a33f7873b037",
+            measurementId: "G-QJDWK150WW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const registerScreen = document.getElementById("registerScreen");
+        const quizScreen = document.getElementById("quizScreen");
+        const resultScreen = document.getElementById("resultScreen");
+        const questionText = document.getElementById("questionText");
+        const answersContainer = document.getElementById("answersContainer");
+        const resultText = document.getElementById("resultText");
+        const resultImage = document.getElementById("resultImage");
+
+        const questions = [
+            { text: "Si Jikook n'est pas réel, ça vous dérange ?", answers: ["Oui", "Non", "Peu importe"] },
+            { text: "Pensez-vous que 'Are You Sure' confirme leur relation ?", answers: ["Oui", "Non", "Je ne sais pas"] },
+            { text: "Pourquoi shippez-vous Jikook ?", answers: ["Leur lien", "Leur talent", "Juste pour le fun"] }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userResponses = [];
+
+        document.getElementById("registerBtn").addEventListener("click", async () => {
+            const pseudo = document.getElementById("pseudo").value;
+            const twitter = document.getElementById("twitter").value;
+
+            if (pseudo && twitter) {
+                await addDoc(collection(db, "users"), { pseudo, twitter });
+                registerScreen.classList.add("hidden");
+                quizScreen.classList.remove("hidden");
+                showQuestion();
+            } else {
+                alert("Veuillez remplir tous les champs.");
+            }
+        });
+
+        function showQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                questionText.innerText = currentQuestion.text;
+                answersContainer.innerHTML = "";
+                currentQuestion.answers.forEach((answer) => {
+                    const button = document.createElement("button");
+                    button.innerText = answer;
+                    button.classList.add("answerBtn");
+                    button.onclick = () => {
+                        userResponses.push(answer);
+                        currentQuestionIndex++;
+                        showQuestion();
+                    };
+                    answersContainer.appendChild(button);
+                });
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            quizScreen.classList.add("hidden");
+            resultScreen.classList.remove("hidden");
+            const result = userResponses.includes("Oui") ? "Jikooker Émotionnel" : "Jikooker Chill";
+            resultText.innerText = `Tu es un ${result} !`;
+            resultImage.src = "https://source.unsplash.com/200x200/?happy";
+        }
+    </script>
+</body>
+</html>
