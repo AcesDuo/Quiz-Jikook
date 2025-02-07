@@ -77,14 +77,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBgJZEJrzfjR-VkRVW5VhpLJbZHKdcI-F8",
-            authDomain: "quizjikook.firebaseapp.com",
-            projectId: "quizjikook",
-            storageBucket: "quizjikook.firebasestorage.app",
-            messagingSenderId: "432884064534",
-            appId: "1:432884064534:web:588c14aa25a33f7873b037",
-            measurementId: "G-QJDWK150WW"
+       const firebaseConfig = {
+          apiKey: "AIzaSyBgJZEJrzfjR-VkRVW5VhpLJbZHKdcI-F8",
+          authDomain: "quizjikook.firebaseapp.com",
+          projectId: "quizjikook",
+          storageBucket: "quizjikook.firebasestorage.app",
+          messagingSenderId: "432884064534",
+          appId: "1:432884064534:web:588c14aa25a33f7873b037",
+          measurementId: "G-QJDWK150WW"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -108,14 +108,19 @@
         let userResponses = [];
 
         document.getElementById("registerBtn").addEventListener("click", async () => {
-            const pseudo = document.getElementById("pseudo").value;
-            const twitter = document.getElementById("twitter").value;
+            const pseudo = document.getElementById("pseudo").value.trim();
+            const twitter = document.getElementById("twitter").value.trim();
 
             if (pseudo && twitter) {
-                await addDoc(collection(db, "users"), { pseudo, twitter });
-                registerScreen.classList.add("hidden");
-                quizScreen.classList.remove("hidden");
-                showQuestion();
+                try {
+                    await addDoc(collection(db, "users"), { pseudo, twitter });
+                    registerScreen.classList.add("hidden");
+                    quizScreen.classList.remove("hidden");
+                    showQuestion();
+                } catch (error) {
+                    console.error("Erreur lors de l'enregistrement :", error);
+                    alert("Une erreur est survenue. Vérifiez votre connexion.");
+                }
             } else {
                 alert("Veuillez remplir tous les champs.");
             }
