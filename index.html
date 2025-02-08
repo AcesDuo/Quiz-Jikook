@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quel type de Jikooker es-tu ?</title>
+    <title>What type of Jikooker are you?</title>
     <style>
         body {
             background-image: url('https://source.unsplash.com/random/1920x1080');
@@ -94,88 +94,247 @@
                 font-size: 16px;
             }
         }
+
+    
+
     </style>
 </head>
 <body>
     <div class="container" id="registerScreen">
-        <h2>Quel type de Jikooker es-tu ? 🐰💜</h2>
-        <input type="text" id="pseudo" placeholder="Entrez votre pseudo" required>
-        <input type="text" id="twitter" placeholder="Entrez votre Twitter" required>
-        <input type="password" id="password" placeholder="Entrez votre mot de passe" required>
-        <button id="registerBtn">S'enregistrer</button>
+        <h2>What type of Jikooker are you? 🐥🐰</h2>
+        <input type="text" id="pseudo" placeholder="Enter your username" required>
+        <input type="text" id="twitter" placeholder="Enter your Twitter handle" required>
+        <input type="password" id="password" placeholder="Enter your password" required>
+        <button id="registerBtn">Register</button>
     </div>
 
     <div class="container hidden" id="welcomeScreen">
         <h2 id="welcomeMessage"></h2>
         <div class="profile">
-            <img id="profilePic" src="" alt="Avatar">
+            <img id="profilePic" src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png" alt="Avatar">
             <p id="profileBio"></p>
         </div>
-        <button id="startQuizBtn">Commencer le quiz 🐥💛</button>
+        <button id="startQuizBtn">Start the quiz 💜💛</button>
     </div>
 
     <div class="container hidden" id="quizScreen">
-        <h2 id="questionText">Question ici</h2>
+        <h2 id="questionText">Question here</h2>
         <div id="answersContainer"></div>
+        <button id="prevQuestionBtn" class="hidden">Back</button>
+        <button id="nextQuestionBtn" class="hidden">Next</button>
     </div>
 
     <div class="container hidden result-animation" id="resultScreen">
-        <h2>Résultat :</h2>
+        <h2>Result:</h2>
         <p id="resultText"></p>
-        <img id="resultImage" src="" alt="Résultat">
+        <img id="resultImage" src="" alt="Result">
+        <!-- Bouton pour refaire le quiz -->
+    <button id="restartQuizBtn">Retry the Quiz 🔄</button>
+
+    <!-- Bouton pour partager sur Twitter -->
+    <button id="shareTwitterBtn">Share on Twitter 🐦</button>
     </div>
 
     <script type="module">
+         document.addEventListener("DOMContentLoaded", () => {
+         document.getElementById("resultScreen").style.display = "none";
+        });
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-              apiKey: "AIzaSyBgJZEJrzfjR-VkRVW5VhpLJbZHKdcI-F8",
-              authDomain: "quizjikook.firebaseapp.com",
-              projectId: "quizjikook",
-              storageBucket: "quizjikook.firebasestorage.app",
-              messagingSenderId: "432884064534",
-              appId: "1:432884064534:web:588c14aa25a33f7873b037",
-              measurementId: "G-QJDWK150WW"
+            apiKey: "AIzaSyBgJZEJrzfjR-VkRVW5VhpLJbZHKdcI-F8",
+            authDomain: "quizjikook.firebaseapp.com",
+            projectId: "quizjikook",
+            storageBucket: "quizjikook.firebasestorage.app",
+            messagingSenderId: "432884064534",
+            appId: "1:432884064534:web:588c14aa25a33f7873b037",
+            measurementId: "G-QJDWK150WW"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const registerScreen = document.getElementById("registerScreen");
-        const welcomeScreen = document.getElementById("welcomeScreen");
-        const quizScreen = document.getElementById("quizScreen");
-        const resultScreen = document.getElementById("resultScreen");
-        const welcomeMessage = document.getElementById("welcomeMessage");
-        const profilePic = document.getElementById("profilePic");
-        const profileBio = document.getElementById("profileBio");
-        const startQuizBtn = document.getElementById("startQuizBtn");
-        
         document.getElementById("registerBtn").addEventListener("click", async () => {
             const pseudo = document.getElementById("pseudo").value.trim();
             const twitter = document.getElementById("twitter").value.trim();
+            const password = document.getElementById("password").value.trim();
 
-            if (pseudo && twitter) {
-                try {
-                    await addDoc(collection(db, "users"), { pseudo, twitter });
-                    registerScreen.classList.add("hidden");
-                    welcomeScreen.classList.remove("hidden");
-                    welcomeMessage.innerText = `Bienvenue, ${pseudo} ! 🐰💜`;
-                    profilePic.src = `https://unavatar.io/twitter/${twitter}`;
-                    profileBio.innerText = `@${twitter}`;
-                } catch (error) {
-                    console.error("Erreur lors de l'enregistrement :", error);
-                    alert("Une erreur est survenue. Vérifiez votre connexion.");
-                }
-            } else {
-                alert("Veuillez remplir tous les champs.");
+            if (!pseudo || !twitter || !password) {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "users"), {
+                    pseudo: pseudo,
+                    twitter: twitter,
+                    password: password,
+                    timestamp: new Date()
+                });
+                document.getElementById("registerScreen").classList.add("hidden");
+                document.getElementById("welcomeScreen").classList.remove("hidden");
+                document.getElementById("welcomeMessage").innerText = `Welcome, ${pseudo}!`;
+                document.getElementById("profileBio").innerText = `@${twitter}`;
+                document.getElementById("profilePic").src = `https://unavatar.io/twitter/${twitter}`;
+
+            } catch (error) {
+                console.error("Error during registration:", error);
+                alert("Registration error. Please check your connection.");
             }
         });
+       
+        const quizData = [
+    { 
+        question: "What is your favorite Jikook moment?", 
+        answers: [
+            { text: "GCF Tokyo 💙💜", type: "soft" },
+            { text: "Are You Sure ?! 🔥", type: "passionate" },
+            { text: "Their concert interactions 🎤", type: "detective" },
+            { text: "ALL their moments 😍", type: "chill" }
+        ]
+    },
+    { 
+        question: "What nickname would you give Jikook?", 
+        answers: [
+            { text: "Soulmates 🥰", type: "soft" },
+            { text: "Adorable besties 🤗", type: "chill" },
+            { text: "Fanservice kings 👑", type: "detective" },
+            { text: "The secret couple 🫣", type: "passionate" }
+        ]
+    },
+    { 
+        question: "Which song reminds you of Jikook the most?", 
+        answers: [
+            { text: "Euphoria ✨", type: "soft" },
+            { text: "Promise 💖", type: "chill" },
+            { text: "Still With You 🌙", type: "detective" },
+            { text: "Let’s BTS OST 🎶", type: "passionate" }
+        ]
+    },
+    { 
+        question: "If Jikook went on a trip together, where would they go?", 
+        answers: [
+            { text: "Tokyo 🇯🇵", type: "soft" },
+            { text: "Paris 🇫🇷", type: "passionate" },
+            { text: "Busan 🏝️", type: "chill" },
+            { text: "New York 🏙️", type: "detective" }
+        ]
+    },
+    { 
+        question: "If you could give Jikook a gift, what would it be?", 
+        answers: [
+            { text: "A photo album full of their memories 📸", type: "soft" },
+            { text: "A romantic trip ✈️", type: "passionate" },
+            { text: "Matching outfits 👕", type: "chill" },
+            { text: "A private moment with no cameras 🔒", type: "detective" }
+        ]
+    }
+];
 
-        startQuizBtn.addEventListener("click", () => {
-            welcomeScreen.classList.add("hidden");
-            quizScreen.classList.remove("hidden");
-        });
+let currentQuestionIndex = 0;
+
+let scores = { soft: 0, passionate: 0, detective: 0, chill: 0 };
+
+function showQuestion() {
+    const questionText = document.getElementById("questionText");
+    const answersContainer = document.getElementById("answersContainer");
+    
+    questionText.innerText = quizData[currentQuestionIndex].question;
+    answersContainer.innerHTML = "";
+
+    quizData[currentQuestionIndex].answers.forEach(answer => {
+        const btn = document.createElement("button");
+        btn.innerText = answer.text;
+        btn.onclick = () => {
+            scores[answer.type]++;
+            nextQuestion();
+        };
+        answersContainer.appendChild(btn);
+    });
+
+    document.getElementById("prevQuestionBtn").classList.toggle("hidden", currentQuestionIndex === 0);
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    if (event) event.preventDefault();
+
+    console.log("Affichage du résultat...");
+
+    // Cacher les autres écrans
+    document.getElementById("quizScreen").style.display = "none";
+    document.getElementById("welcomeScreen").style.display = "none";
+
+    let resultScreen = document.getElementById("resultScreen");
+    resultScreen.style.display = "block";
+    resultScreen.style.visibility = "visible";
+    resultScreen.style.opacity = "1"; 
+
+    let resultType = Object.keys(scores).reduce((a, b) => (scores[a] > scores[b] ? a : b));
+
+    let resultText = "";
+    let resultImage = "";
+
+    if (resultType === "soft") {
+        resultText = "You are *The Soft Jikooker*! 🥰 You love their sweet and heartwarming moments!";
+        resultImage = "https://tse2.mm.bing.net/th?id=OIP.C56DSu0dVmbM_NtsftG0JgHaEK&pid=Api";
+    } else if (resultType === "passionate") {
+        resultText = "You are *The Passionate Jikooker*! 🔥 You feel the deep connection between them!";
+        resultImage = "https://tse3.mm.bing.net/th?id=OIP.PgcxSmKVShbE0FpOll1NLAAAAA&pid=Api";
+    } else if (resultType === "detective") {
+        resultText = "You are *The Detective Jikooker*! 🕵️‍♂️ You analyze every detail of their interactions!";
+        resultImage = "https://tse2.mm.bing.net/th?id=OIP.-C2gxSUCYKjxvxwGoutahgHaEK&pid=Api";
+    } else {
+        resultText = "You are *The Chill Jikooker*! 😎 You love Jikook, but you keep it relaxed!";
+        resultImage = "https://tse2.mm.bing.net/th?id=OIP.HoU01-tkeFR14LH3EDuYtgHaEK&pid=Api";
+    }
+
+    document.getElementById("resultText").innerText = resultText;
+    document.getElementById("resultImage").src = resultImage;
+
+    console.log("Résultat affiché :", resultText);
+}
+
+document.getElementById("startQuizBtn").addEventListener("click", () => {
+    document.getElementById("welcomeScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+    showQuestion();
+});
+document.getElementById("restartQuizBtn").addEventListener("click", () => {
+    // Réinitialiser les scores
+    scores = { soft: 0, passionate: 0, detective: 0, chill: 0 };
+    
+    // Réinitialiser l'index des questions
+    currentQuestionIndex = 0;
+
+    // Cacher l'écran des résultats et afficher le quiz
+    document.getElementById("resultScreen").style.display = "none";
+    document.getElementById("quizScreen").style.display = "block";
+    
+    showQuestion(); // Relancer le quiz
+});
+
+document.getElementById("shareTwitterBtn").addEventListener("click", () => {
+    // Texte du tweet avec le résultat
+    const tweetText = `I just found out that I'm ${document.getElementById("resultText").innerText}! 💜 Take the Jikook quiz here: https://example.com`;
+
+    // URL de partage Twitter
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+    
+    // Ouvrir Twitter dans un nouvel onglet
+    window.open(twitterUrl, "_blank");
+});
+
     </script>
 </body>
 </html>
