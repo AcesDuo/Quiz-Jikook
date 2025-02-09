@@ -88,7 +88,14 @@
         .result-animation {
             animation: fadeIn 1.5s ease-in-out;
         }
-
+         #resultImage {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
         @media screen and (max-width: 768px) {
             input, button {
                 font-size: 16px;
@@ -287,16 +294,16 @@ function showResult() {
 
     if (resultType === "soft") {
         resultText = "You are *The Soft Jikooker*! 🥰 You love their sweet and heartwarming moments!";
-        resultImage = "https://tse2.mm.bing.net/th?id=OIP.C56DSu0dVmbM_NtsftG0JgHaEK&pid=Api";
+        resultImage = "https://i.pinimg.com/originals/5a/2b/56/5a2b560a8c5f1a3f39d4c4a3f6d2d71c.jpg";
     } else if (resultType === "passionate") {
         resultText = "You are *The Passionate Jikooker*! 🔥 You feel the deep connection between them!";
-        resultImage = "https://tse3.mm.bing.net/th?id=OIP.PgcxSmKVShbE0FpOll1NLAAAAA&pid=Api";
+        resultImage = "https://i.pinimg.com/originals/4b/6a/9f/4b6a9f6edafe90c8f7b56a14c39e5b85.jpg";
     } else if (resultType === "detective") {
         resultText = "You are *The Detective Jikooker*! 🕵️‍♂️ You analyze every detail of their interactions!";
-        resultImage = "https://tse2.mm.bing.net/th?id=OIP.-C2gxSUCYKjxvxwGoutahgHaEK&pid=Api";
+        resultImage = "https://i.pinimg.com/originals/6c/3d/29/6c3d29d3b96f87c4e2a7db95b3e9f2c1.jpg";
     } else {
         resultText = "You are *The Chill Jikooker*! 😎 You love Jikook, but you keep it relaxed!";
-        resultImage = "https://tse2.mm.bing.net/th?id=OIP.HoU01-tkeFR14LH3EDuYtgHaEK&pid=Api";
+        resultImage = "https://i.pinimg.com/originals/7d/81/34/7d8134c9fcd91d1d59b6d9b5ebd09514.jpg";
     }
 
     document.getElementById("resultText").innerText = resultText;
